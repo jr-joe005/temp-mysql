@@ -1,0 +1,17 @@
+version: '3'
+services:
+  #### MySql DB Server
+  mysql-db-server:
+    container_name: mysql-db-server
+    image: mysql:8.0.31
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+      MYSQL_DATABASE: test_db
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/config/my.cnf:/etc/mysql/my.cnf
+      - ./mysql/init:/etc/mysql/init
