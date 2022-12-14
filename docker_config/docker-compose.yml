@@ -15,3 +15,4 @@ services:
     volumes:
       - ./mysql/config/my.cnf:/etc/mysql/my.cnf
       - ./mysql/init:/etc/mysql/init
+      - ./mysql/ssl_file:/etc/mysql/ssl_file

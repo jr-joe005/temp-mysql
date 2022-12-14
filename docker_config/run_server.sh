@@ -8,5 +8,7 @@ docker rm mysql-db-server
 docker-compose up -d
 sleep 60
 docker exec -it mysql-db-server bash /etc/mysql/init/init_server.sh
-# 进入容器，查看实时日志
+
+# 重新启动并进入容器，查看实时日志
+docker restart mysql-db-server
 docker-compose logs -f
