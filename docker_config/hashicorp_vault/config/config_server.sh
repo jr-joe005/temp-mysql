@@ -17,6 +17,8 @@ vault write database/config/test_db \
       allowed_roles="dbuser" \
       username="root" \
       password="password"
+      tls_certificate_key=@/vault/ssl_file/client-tls.pem \
+      tls_ca=@/vault/ssl_file/ca.pem
 
 # 设置动态密钥策略
 vault write database/roles/dbuser \
