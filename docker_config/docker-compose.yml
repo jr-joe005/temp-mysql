@@ -16,3 +16,20 @@ services:
       - ./mysql/config/my.cnf:/etc/mysql/my.cnf
       - ./mysql/init:/etc/mysql/init
       - ./mysql/ssl_file:/etc/mysql/ssl_file
+
+  #### Vault
+  vault:
+    container_name: vault-server
+    image: vault:1.12.2
+    volumes:
+      - ./hashicorp_vault/config:/vault/config
+      - ./hashicorp_vault/ssl_file:/vault/ssl_file
+    environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+      - VAULT_ADDRESS=http://0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config=/vault/config/config.hcl
+    ports:
+      - "8200:8200"

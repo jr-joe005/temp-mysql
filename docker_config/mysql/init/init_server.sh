@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 执行初期化SQL文
-mysql -h192.168.3.137 -P3306 -uroot -ppassword -Dtest_db</etc/mysql/init/init_db.sql
+mysql -uroot -ppassword -Dtest_db</etc/mysql/init/init_db.sql
 
 # 配置Postgresql配置文件及SSL证书
 echo "conf file move ... START"
