@@ -19,3 +19,9 @@ server:
 #    username: testuser
 #    password: testpassword
 
+#### Valut配置
+spring:
+  cloud:
+    vault:
+      token: hvs.dXRm0m31APpp6iId5DOYQsIH
+

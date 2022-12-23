@@ -16,11 +16,11 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
 
-    @Value("${username}")
-    String username = "xxxx";
+    //@Value("${username}")
+    String username = "root";
 
-    @Value("${password}")
-    String password = "yyyy";
+    //@Value("${password}")
+    String password = "password";
 
     /**
      * 创建可用数据源1
