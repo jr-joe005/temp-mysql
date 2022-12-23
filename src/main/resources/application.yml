@@ -3,19 +3,19 @@ server:
   port: 8081
 
 #### SSL配置 * DB配置的url的参数补足
-ssl:
-  cert:
-    #path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
-    path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
-  # clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
-  config: true&clientCertificateKeyStoreUrl=file:${ssl.cert.path}/keystoremysql&clientCertificateKeyStorePassword=password&trustCertificateKeyStoreUrl=file:${ssl.cert.path}/truststoremysql&trustCertificateKeyStorePassword=password
+#ssl:
+#  cert:
+#    #path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
+#    path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
+#  # clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
+#  config: true&clientCertificateKeyStoreUrl=file:${ssl.cert.path}/keystoremysql&clientCertificateKeyStorePassword=password&trustCertificateKeyStoreUrl=file:${ssl.cert.path}/truststoremysql&trustCertificateKeyStorePassword=password
 
-#### 通过Vault获取动态密码时，将该DB配置模块注释掉, 并放开DataSourceConfig.java ####
 #### DB配置
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
-    username: testuser
-    password: testpassword
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    type: com.zaxxer.hikari.HikariDataSource
+#    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
+#    username: testuser
+#    password: testpassword
+

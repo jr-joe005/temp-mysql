@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: kv
+  profiles:
+    active:
+      - test_db
+  cloud:
+    vault:
+      authentication: TOKEN
+      token: hvs.VPMk3H6F6Fls7xCRktPIgZmV
+      scheme: http
+      host: localhost
+      port: 8200
+      config:
+        order: 1
+      connection-timeout: 5000
+      read-timeout: 15000
