@@ -16,10 +16,10 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
 
-    //@Value("${username}")
+    @Value("${username}")
     String username = "root";
 
-    //@Value("${password}")
+    @Value("${password}")
     String password = "password";
 
     /**
