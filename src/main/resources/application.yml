@@ -16,8 +16,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
-#    username: testuser
-#    password: testpassword
+    #### ** username, password关联说明
+    #### **** 1. 「${xxx}」指从Vault取得的设定字符串。XXX为Vault中保存的Key，${XXX}为Vault中保存的Value
+    #### **** 2. 由于${user},${pwd}在Spring中已经被使用，如果Vault保存的Key为「user」,「pwd」时，Vault设定的Value可能无法正常传递到Spring
+    #### **** 3. Vault的Secrets Engine为database时，username, password可以不用设置
+    username: ${username}
+    password: ${password}
 
 #### Vault配置
 #spring:
@@ -33,13 +37,16 @@ spring:
         application-name: test_db
       #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
       #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
-      database:
-        enabled: true
-        role: dbuser
-#      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
-#      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
 #      database:
 #        enabled: true
-#        role: dbuser02
+#        role: dbuser
+      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
+      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
+#      database:
+#        enabled: true
+#        static-role: true
+#        role: dbuser2
+      #### *** 上记3种DB登录用账户/密码的取得方式(键值对[kv],动态Vault角色[dbuser],静态Vault角色[dbuser2])，任意一种均可单独使用。
+      ####     动态Vault角色与静态Vault角色无法同时使用
   config:
     import: vault://
