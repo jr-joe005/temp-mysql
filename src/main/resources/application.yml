@@ -20,8 +20,8 @@ spring:
     #### **** 1. 「${xxx}」指从Vault取得的设定字符串。XXX为Vault中保存的Key，${XXX}为Vault中保存的Value
     #### **** 2. 由于${user},${pwd}在Spring中已经被使用，如果Vault保存的Key为「user」,「pwd」时，Vault设定的Value可能无法正常传递到Spring
     #### **** 3. Vault的Secrets Engine为database时，username, password可以不用设置
-    username: ${username}
-    password: ${password}
+#    username: ${username}
+#    password: ${password}
 
 #### Vault配置
 #spring:
@@ -31,10 +31,10 @@ spring:
       token: hvs.o5HAq9rCdHPiYFURFvR7BQbc
       #### 取得Vault中，kv/test_db中所有的键值对，并作为变量使用
       #### ** 如果不指定backend，则Spring会使用[secret]作为默认的backend路径
-      kv:
-        enabled: true
-        backend: kv
-        application-name: test_db
+#      kv:
+#        enabled: true
+#        backend: kv
+#        application-name: test_db
       #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
       #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
 #      database:
@@ -42,10 +42,10 @@ spring:
 #        role: dbuser
       #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
       #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
-#      database:
-#        enabled: true
-#        static-role: true
-#        role: dbuser2
+      database:
+        enabled: true
+        static-role: true
+        role: dbuser2
       #### *** 上记3种DB登录用账户/密码的取得方式(键值对[kv],动态Vault角色[dbuser],静态Vault角色[dbuser2])，任意一种均可单独使用。
       ####     动态Vault角色与静态Vault角色无法同时使用
   config:
