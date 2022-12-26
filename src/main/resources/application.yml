@@ -3,25 +3,43 @@ server:
   port: 8081
 
 #### SSL配置 * DB配置的url的参数补足
-#ssl:
-#  cert:
-#    #path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
-#    path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
-#  # clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
-#  config: true&clientCertificateKeyStoreUrl=file:${ssl.cert.path}/keystoremysql&clientCertificateKeyStorePassword=password&trustCertificateKeyStoreUrl=file:${ssl.cert.path}/truststoremysql&trustCertificateKeyStorePassword=password
+ssl:
+  cert:
+    path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
+    #path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
+  #### clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
+  config: true&clientCertificateKeyStoreUrl=file:${ssl.cert.path}/keystoremysql&clientCertificateKeyStorePassword=password&trustCertificateKeyStoreUrl=file:${ssl.cert.path}/truststoremysql&trustCertificateKeyStorePassword=password
 
 #### DB配置
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    type: com.zaxxer.hikari.HikariDataSource
-#    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
 #    username: testuser
 #    password: testpassword
 
-#### Valut配置
-spring:
+#### Vault配置
+#spring:
   cloud:
     vault:
-      token: hvs.dXRm0m31APpp6iId5DOYQsIH
-
+      uri: http://localhost:8200
+      token: hvs.o5HAq9rCdHPiYFURFvR7BQbc
+      #### 取得Vault中，kv/test_db中所有的键值对，并作为变量使用
+      #### ** 如果不指定backend，则Spring会使用[secret]作为默认的backend路径
+      kv:
+        enabled: true
+        backend: kv
+        application-name: test_db
+      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
+      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
+      database:
+        enabled: true
+        role: dbuser
+#      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
+#      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
+#      database:
+#        enabled: true
+#        role: dbuser02
+  config:
+    import: vault://
