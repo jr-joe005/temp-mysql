@@ -22,6 +22,7 @@ spring:
     #### **** 3. Vault的Secrets Engine为database时，username, password可以不用设置
 #    username: ${username}
 #    password: ${password}
+    ## Hikari DataSource特有设定项
     hikari:
       ## 自动提交
       #### 默认是 true，自动提交从池中返回的连接
@@ -68,19 +69,19 @@ spring:
   cloud:
     vault:
       uri: http://localhost:8200
-      token: hvs.o5HAq9rCdHPiYFURFvR7BQbc
+      token: hvs.FdipHfrYZ0K2zL3xO8mVlYC8
       #### 取得Vault中，kv/test_db中所有的键值对，并作为变量使用
       #### ** 如果不指定backend，则Spring会使用[secret]作为默认的backend路径
 #      kv:
 #        enabled: true
 #        backend: kv
 #        application-name: test_db
-      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
+      #### 通过Vault，database的dbuser角色(动态Vault角色)，生成并获取DB连接用账户密码
       #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
 #      database:
 #        enabled: true
 #        role: dbuser
-      #### 通过Vault，database的dbuser角色，生成并获取DB连接用账户密码
+      #### 通过Vault，database的dbuser角色(静态Vault角色)，获取DB连接用账户密码
       #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
       database:
         enabled: true
