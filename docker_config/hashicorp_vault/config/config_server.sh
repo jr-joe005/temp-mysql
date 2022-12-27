@@ -13,12 +13,14 @@ vault secrets enable database
 # 创建与Mysql的连接
 vault write database/config/test_db \
       plugin_name="mysql-database-plugin" \
-      connection_url="{{username}}:{{password}}@tcp(192.168.2.3:3306)/test_db" \
+      connection_url="{{username}}:{{password}}@tcp(192.168.3.137:3306)/test_db" \
       allowed_roles="dbuser" \
       username="root" \
       password="password"
+      tls_certificate_key=@/vault/ssl_file/client-tls.pem \
+      tls_ca=@/vault/ssl_file/ca.pem
 
-# 设置动态密钥策略
+# 创建Vault凭证角色
 vault write database/roles/dbuser \
     db_name="test_db" \
     creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT,INSERT,UPDATE ON *.* TO '{{name}}'@'%';" \

@@ -5,17 +5,89 @@ server:
 #### SSL配置 * DB配置的url的参数补足
 ssl:
   cert:
-    #path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
-    path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
-  # clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
+    path: /Users/bbx/Desktop/_XXX/work/workspace/temp-mysql/src/main/resources/ssl_file
+    #path: C:/workspace/GitHub/temp-mysql/src/main/resources/ssl_file
+  #### clientCertificateKeyStorePassword，trustCertificateKeyStorePassword设定的内容为生成keyStore和TrustStore文件时使用的密码
   config: true&clientCertificateKeyStoreUrl=file:${ssl.cert.path}/keystoremysql&clientCertificateKeyStorePassword=password&trustCertificateKeyStoreUrl=file:${ssl.cert.path}/truststoremysql&trustCertificateKeyStorePassword=password
 
-#### 通过Vault获取动态密码时，将该DB配置模块注释掉, 并放开DataSourceConfig.java ####
 #### DB配置
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://localhost:3306/test_db?useUnicode=true&characterEncoding=utf-8&verifyServerCertificate=true&serverTimeZone=Asia/Shanghai&requireSSL=false&useSSL=${ssl.config}
-    username: testuser
-    password: testpassword
+    #### ** username, password关联说明
+    #### **** 1. 「${xxx}」指从Vault取得的设定字符串。XXX为Vault中保存的Key，${XXX}为Vault中保存的Value
+    #### **** 2. 由于${user},${pwd}在Spring中已经被使用，如果Vault保存的Key为「user」,「pwd」时，Vault设定的Value可能无法正常传递到Spring
+    #### **** 3. Vault的Secrets Engine为database时，username, password可以不用设置
+#    username: ${username}
+#    password: ${password}
+    ## Hikari DataSource特有设定项
+    hikari:
+      ## 自动提交
+      #### 默认是 true，自动提交从池中返回的连接
+      auto-commit: true
+      ## 空闲连接超时时长
+      #### 等待来自池的连接的最大毫秒数，默认为 30000 ms = 30 s，允许最小时间是 250 毫秒，如果小于 250 毫秒，则被重置回 30 秒。
+      idle-timeout: 60000
+      ## 连接超时时长
+      #### 连接允许在池中闲置的最长时间，默认为 600000，即 10 分钟。如果 idleTimeout + 1 秒 > maxLifetime 且 maxLifetime > 0，
+      #### 则会被重置为 0（代表永远不会退出）；如果 idleTimeout != 0 且小于 10 秒，则会被重置为 10 秒。只有当 minimumIdle 小于
+      #### maximumPoolSize 时，这个参数才生效，当空闲连接数超过 minimumIdle，而且空闲时间超过 idleTimeout，则会被移除。
+      connection-timeout: 60000
+      ## 连接存活时间
+      #### 这个值必须小于 maxLifetime 值。Keepalive "只会发生在空闲的连接上。当对一个给定的连接进行 "keepalive "的时间到了，
+      #### 该连接将从池中移除。允许的最小值是 30000 ms（30秒），但最理想的值是在分钟范围内。默认值：0
+      keep-alive-time: 0
+      ## 池中连接最长生命周期
+      #### 默认为 1800000，如果不等于 0 且小于 30 秒则会被重置回 30 分钟。强烈建议设置这个参数。
+      max-lifetime: 0
+      ## 最小空闲连接数
+      #### 控制连接池空闲连接的最小数量，当连接池空闲连接少于 minimumIdle，而且总共连接数不大于 maximumPoolSize 时，HikariCP 会尽力补充新的连接。
+      #### 为了性能考虑，不建议设置此值，而是让 HikariCP 把连接池当做固定大小的处理，默认 minimumIdle 与 maximumPoolSize 一样。
+      #### 当 minIdle < 0 或者 minIdle > maxPoolSize，则被重置为 maxPoolSize，该值默认为 10。
+      minimum-idle: 10
+      ## 最大连接数量
+      #### 池中最大连接数，包括闲置和使用中的连接。默认为 10。如果 maxPoolSize 小于1，则会被重置。当 minIdle <=0 被重置为DEFAULT_POOL_SIZE 则为 10;
+      #### 如果 minIdle > 0 则重置为 minIdle 的值。
+      maximum-pool-size: 10
+      ## 连接池的用户定义名称
+      #### 主要出现在日志记录和 JMX 管理控制台中以识别池和池配置。默认为 HikariPool-1。
+      pool-name: HikariPool-1
+      ## 只读模式
+      #### 从池中获取的连接是否默认处于只读模式。默认为 false。这个属性工作与否取决于数据库的实现
+      readOnly: false
+      ## 连接测试用Query
+      #### 如果你的驱动程序支持 JDBC4，我们强烈建议不要设置这个属性。这是针对不支持 JDBC4 Connection.isValid() API的 "传统 "驱动程序。
+      #### 这是一个查询，在一个连接从池子里给你之前会被执行，以验证与数据库的连接是否仍然有效。同样，尝试在没有这个属性的情况下运行数据库池，
+      #### 如果你的驱动不符合JDBC4标准，HikariCP 会记录一个错误，让你知道。默认值：无。
+      #connectionTestQuery: SELECT 1
+
+
+#### Vault配置
+#spring:
+  cloud:
+    vault:
+      uri: http://localhost:8200
+      token: hvs.FdipHfrYZ0K2zL3xO8mVlYC8
+      #### 取得Vault中，kv/test_db中所有的键值对，并作为变量使用
+      #### ** 如果不指定backend，则Spring会使用[secret]作为默认的backend路径
+#      kv:
+#        enabled: true
+#        backend: kv
+#        application-name: test_db
+      #### 通过Vault，database的dbuser角色(动态Vault角色)，生成并获取DB连接用账户密码
+      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
+#      database:
+#        enabled: true
+#        role: dbuser
+      #### 通过Vault，database的dbuser角色(静态Vault角色)，获取DB连接用账户密码
+      #### ** 此方式获取到的DB连接用用户密码会在程序运行期间一直有效
+      database:
+        enabled: true
+        static-role: true
+        role: dbuser2
+      #### *** 上记3种DB登录用账户/密码的取得方式(键值对[kv],动态Vault角色[dbuser],静态Vault角色[dbuser2])，任意一种均可单独使用。
+      ####     动态Vault角色与静态Vault角色无法同时使用
+  config:
+    import: vault://
